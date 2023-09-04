@@ -73,7 +73,7 @@ public class ChromelyWinHost : NativeHostBase
 
                     var result = DefWindowProcW(hWnd, msg, wParam, lParam);
                     var csp = (NcCalcSizeParams)Marshal.PtrToStructure(lParam, typeof(NcCalcSizeParams));
-                    csp.Region.Input.TargetWindowRect.top -= _maximized ? 0 : topFrameHeight;
+                    csp.Region.Input.TargetWindowRect.top -= topFrameHeight;//_maximized ? 0 : topFrameHeight;
                     Marshal.StructureToPtr(csp, lParam, false);
                     return result;
                 }

@@ -238,7 +238,7 @@ public abstract partial class NativeHostBase : IChromelyNativeHost
 
             case WindowState.Minimize:
                 // Minimize the window
-                result = ShowWindow(_handle, SW.SHOWMINIMIZED);
+                result = ShowWindow(_handle,  SW.MINIMIZE);
                 break;
 
             case WindowState.Maximize:

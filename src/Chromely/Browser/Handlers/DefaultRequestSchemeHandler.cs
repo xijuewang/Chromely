@@ -205,7 +205,7 @@ public class DefaultRequestSchemeHandler : ResourceHandler
         var postDataElements = request?.PostData?.GetElements();
         if (postDataElements is null || (postDataElements.Length == 0))
         {
-            return string.Empty;
+            return null;
         }
 
         var dataElement = postDataElements[0];

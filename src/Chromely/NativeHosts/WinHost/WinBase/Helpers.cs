@@ -109,7 +109,7 @@ internal static class WindowHelper
     {
         try
         {
-            IntPtr handle = MonitorFromWindow(GetDesktopWindow(), MONITOR.DEFAULTTONEAREST);
+            IntPtr handle = MonitorFromWindow(hwnd, MONITOR.DEFAULTTONEAREST);
 
             MONITORINFOEXW monInfo = new(null);
             monInfo.cbSize = (uint)Marshal.SizeOf(monInfo);

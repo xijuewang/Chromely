@@ -604,7 +604,7 @@ public abstract partial class NativeHostBase : IChromelyNativeHost
                 }
             case WM.GETMINMAXINFO:
                 {
-                    if (HandleMinMaxSizes(lParam))
+                    if (HandleMinMaxSizes(hWnd, lParam))
                     {
                         return IntPtr.Zero;
                     }
@@ -646,7 +646,7 @@ public abstract partial class NativeHostBase : IChromelyNativeHost
         HostSizeChanged?.Invoke(this, new SizeChangedEventArgs(width, height));
     }
 
-    private unsafe bool HandleMinMaxSizes(IntPtr lParam)
+    private unsafe bool HandleMinMaxSizes(IntPtr hWnd, IntPtr lParam)
     {
         bool isHandled = false;
 
@@ -667,8 +667,8 @@ public abstract partial class NativeHostBase : IChromelyNativeHost
 
         // https://stackoverflow.com/questions/39816031/maximize-window-maintaining-taskbar-limits
         if (_options.WindowFrameless && _options.WindowState == WindowState.Maximize)
-        {
-            IntPtr handle = MonitorFromWindow(GetDesktopWindow(), MONITOR.DEFAULTTONEAREST);
+        {  
+            IntPtr handle = MonitorFromWindow(hWnd, MONITOR.DEFAULTTONEAREST);
 
             MONITORINFOEXW monInfo = new(null);
             monInfo.cbSize = (uint)Marshal.SizeOf(monInfo);

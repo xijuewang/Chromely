@@ -7,7 +7,8 @@ public class ControllerRoute
 {
     private readonly IChromelyModelBinder _routeParameterBinder;
     private readonly IChromelyDataTransferOptions _dataTransfers;
-    private object[] _routeArguments;
+    //private object[] _routeArguments;
+    private int _argumentsCount;
     private IDictionary<string, object> _queryParameterArgs;
     private IDictionary<string, RouteArgument> _propertyNameArgumentMap;
 
@@ -20,9 +21,11 @@ public class ControllerRoute
         _dataTransfers = dataTransfers;
         IsAsync = isAsync;
         HasReturnValue = hasReturnValue;
-        _routeArguments = new object[argumentInfos.Count];
+        //_routeArguments = new object[argumentInfos.Count];
         _queryParameterArgs = new Dictionary<string, object>();
         _propertyNameArgumentMap = new Dictionary<string, RouteArgument>();
+        SetArgumentDefaultValues(out _argumentsCount, out _propertyNameArgumentMap);
+        //_routeArguments = SetArgumentDefaultValues(out _argumentsCount, out _propertyNameArgumentMap);
     }
 
     public string Name { get; set; }
@@ -44,9 +47,9 @@ public class ControllerRoute
             };
         }
 
-        SetRouteArguments(request);
-        _routeArguments ??= Array.Empty<object>();
-        object? content = Invoke(_routeArguments.Length, _routeArguments);
+        var routeArguments = SetRouteArguments(request);
+        routeArguments ??= Array.Empty<object>();
+        object? content = Invoke(routeArguments.Length, routeArguments);
 
         return CreateResponse(content);
     }
@@ -62,9 +65,9 @@ public class ControllerRoute
             };
         }
 
-        SetRouteArguments(request);
-        _routeArguments ??= Array.Empty<object>();
-        var content = await InvokeAsync(_routeArguments.Length, _routeArguments);
+        var routeArguments = SetRouteArguments(request);
+        routeArguments ??= Array.Empty<object>();
+        var content = await InvokeAsync(routeArguments.Length, routeArguments);
         return CreateResponse(content);
     }
 
@@ -141,37 +144,40 @@ public class ControllerRoute
         return chromelyResponse;
     }
 
-    private void SetRouteArguments(IChromelyRequest request)
+    private object[] SetRouteArguments(IChromelyRequest request)
     {
         ControllerRoute.ValidateRequest(request);
-        _propertyNameArgumentMap = new Dictionary<string, RouteArgument>();
+        //_propertyNameArgumentMap = new Dictionary<string, RouteArgument>();
 
-        _routeArguments = SetArgumentDefaultValues(out int argumentsCount, out _propertyNameArgumentMap);
+        //_routeArguments = SetArgumentDefaultValues(out int argumentsCount, out _propertyNameArgumentMap);
 
-        if (argumentsCount == 0)
+        if (_argumentsCount == 0)
         {
-            return;
+            return null;
         }
 
-        _queryParameterArgs = GetQueryParameterArgs(request.Parameters);
+        var routeArguments = new object[_argumentsCount];
+
+        var queryParameterArgs = GetQueryParameterArgs(request.Parameters);
 
         if (request.PostData is not null)
         {
-            ParsePostData(request.PostData);
+            ParsePostData(request.PostData, routeArguments);
         }
 
         // Add query parameters if exist as query arguments but not parsed.
-        foreach (var queryArg in _queryParameterArgs)
+        foreach (var queryArg in queryParameterArgs)
         {
             if (_propertyNameArgumentMap.ContainsKey(queryArg.Key))
             {
                 var argument = _propertyNameArgumentMap[queryArg.Key];
-                _routeArguments[argument.Index] = queryArg.Value;
+                routeArguments[argument.Index] = queryArg.Value;
             }
         }
+        return routeArguments; 
     }
 
-    private void ParsePostData(object postData)
+    private void ParsePostData(object postData, object[] routeArguments)
     {
         var json = _dataTransfers.ConvertRequestToJson(postData);
 
@@ -184,7 +190,7 @@ public class ControllerRoute
                 if (_propertyNameArgumentMap.ContainsKey(element.Name))
                 {
                     var argument = _propertyNameArgumentMap[element.Name];
-                    _routeArguments[argument.Index] = _routeParameterBinder.Bind(argument.PropertyName, argument.Type, element.Value);
+                    routeArguments[argument.Index] = _routeParameterBinder.Bind(argument.PropertyName, argument.Type, element.Value);
                     _queryParameterArgs.Remove(element.Name);
                 }
             }

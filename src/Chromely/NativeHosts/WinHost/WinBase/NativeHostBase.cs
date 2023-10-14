@@ -172,7 +172,11 @@ public abstract partial class NativeHostBase : IChromelyNativeHost
         var hdc = GetDC(_handle);
         try
         {
-            var dpi = Gdi32.GetDeviceCaps(hdc, Gdi32.DeviceCapability.LOGPIXELSY);
+            int dpi = 0;
+            if (_handle == IntPtr.Zero)
+                dpi = Gdi32.GetDeviceCaps(hdc, Gdi32.DeviceCapability.LOGPIXELSY);
+            else
+                dpi = GetDpiForWindow(_handle);
             scale = (float)dpi / StandardDpi;
         }
         finally
@@ -296,7 +300,10 @@ public abstract partial class NativeHostBase : IChromelyNativeHost
     /// <returns>instance of <see cref="Rectangle"/>.</returns>
     protected virtual Rectangle GetWindowBounds()
     {
-        var bounds = new Rectangle(_options.Position.X, _options.Position.Y, _options.Size.Width, _options.Size.Height);
+        var scale = GetWindowDpiScale();
+        var width = (int)Math.Round(_options.Size.Width * scale, 0);
+        var height = (int)Math.Round(_options.Size.Height * scale, 0);
+        var bounds = new Rectangle(_options.Position.X, _options.Position.Y, width, height);
 
         switch (_options.WindowState)
         {

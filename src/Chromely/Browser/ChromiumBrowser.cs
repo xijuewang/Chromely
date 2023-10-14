@@ -2,7 +2,6 @@
 // Use of this source code is governed by MIT license that can be found in the LICENSE file.
 
 #nullable disable
-
 namespace Chromely.Browser;
 
 /// <summary>
@@ -186,7 +185,11 @@ public abstract partial class ChromiumBrowser
 
         HostHandle = hostHandle;
         var windowInfo = CefWindowInfo.Create();
-        windowInfo.SetAsChild(winXID, new CefRectangle(0, 0, _config.WindowOptions.Size.Width, _config.WindowOptions.Size.Height));
+        
+        var scale = NativeHost.GetWindowDpiScale();
+        var width = (int)Math.Round(_config.WindowOptions.Size.Width * scale, 0);
+        var height = (int)Math.Round(_config.WindowOptions.Size.Height * scale, 0);
+        windowInfo.SetAsChild(winXID, new CefRectangle(0, 0, width, height));
 
         Address = _config.StartUrl;
         StartUrl = _config.StartUrl;

@@ -1,6 +1,5 @@
 ﻿// Copyright © 2017 Chromely Projects. All rights reserved.
 // Use of this source code is governed by MIT license that can be found in the LICENSE file.
-
 namespace Chromely.Core.Network;
 
 public class ControllerRoute
@@ -185,14 +184,22 @@ public class ControllerRoute
         {
             var jsonDocumentOptions = _dataTransfers.SerializerOptions.DocumentOptions();
             using JsonDocument jsonDocument = JsonDocument.Parse(json, jsonDocumentOptions);
-            foreach (JsonProperty element in jsonDocument.RootElement.EnumerateObject())
-            {
-                if (_propertyNameArgumentMap.ContainsKey(element.Name))
+            if (routeArguments.Length > 1)
+                foreach (JsonProperty element in jsonDocument.RootElement.EnumerateObject())
                 {
-                    var argument = _propertyNameArgumentMap[element.Name];
-                    routeArguments[argument.Index] = _routeParameterBinder.Bind(argument.PropertyName, argument.Type, element.Value);
-                    _queryParameterArgs.Remove(element.Name);
+                    if (_propertyNameArgumentMap.ContainsKey(element.Name))
+                    {
+                        var argument = _propertyNameArgumentMap[element.Name];
+                        routeArguments[argument.Index] = _routeParameterBinder.Bind(argument.PropertyName, argument.Type, element.Value);
+                        _queryParameterArgs.Remove(element.Name);
+                    }
                 }
+            else
+            {
+                var argumentName = _propertyNameArgumentMap.First().Key;
+                var argument = _propertyNameArgumentMap[argumentName];
+                routeArguments[0] = _routeParameterBinder.Bind(argument.PropertyName, argument.Type, jsonDocument.RootElement);
+                _queryParameterArgs.Remove(argumentName);
             }
         }
     }

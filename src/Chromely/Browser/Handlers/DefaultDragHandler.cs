@@ -75,20 +75,24 @@ public class DefaultDragHandler : CefDragHandler
             {
                 framelessOption.IsDraggable = (nativeHost, point) =>
                 {
-                    var hitNoDrag = regions.Any(r => !r.Draggable && ContainsPoint(r, point));
+                    var scale = nativeHost.GetWindowDpiScale();
+                    var hitNoDrag = regions.Any(r => !r.Draggable && ContainsPoint(r, point, scale));
                     if (hitNoDrag)
                     {
                         return false;
                     }
 
-                    return regions.Any(r => r.Draggable && ContainsPoint(r, point));
+                    return regions.Any(r => r.Draggable && ContainsPoint(r, point, scale));
                 };
             }
         }
     }
 
-    private static bool ContainsPoint(CefDraggableRegion region, Point point)
+    private static bool ContainsPoint(CefDraggableRegion region, Point point, float scale)
     {
+        point.X = (int)Math.Round(point.X / scale);
+        point.Y = (int)Math.Round(point.Y / scale);
+
         return point.X >= region.Bounds.X && point.X <= (region.Bounds.X + region.Bounds.Width)
             && point.Y >= region.Bounds.Y && point.Y <= (region.Bounds.Y + region.Bounds.Height);
     }

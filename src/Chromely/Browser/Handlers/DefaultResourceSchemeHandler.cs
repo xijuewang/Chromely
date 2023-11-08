@@ -48,8 +48,8 @@ public class DefaultResourceSchemeHandler : ResourceHandler
         var u = new Uri(request.Url);
         var file = isFolderResourceScheme
                     ? scheme.GetResourceFolderFile(u.AbsolutePath)
-                    : u.Authority + u.AbsolutePath;
-
+                    : u.Authority + (u.AbsolutePath.StartsWith("/:")? u.AbsolutePath.Substring(1):u.AbsolutePath); //windows特殊处理 带盘符传递 local://d/:/test.pdf mod by wangjf 2023/10/18
+        file = WebUtility.UrlDecode(file);
         _fileInfo = new FileInfo(file);
         // Check if file exists 
         if (!_fileInfo.Exists)

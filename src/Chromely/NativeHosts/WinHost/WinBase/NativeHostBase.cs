@@ -660,15 +660,21 @@ public abstract partial class NativeHostBase : IChromelyNativeHost
         MINMAXINFO* mmi = (MINMAXINFO*)lParam;
         if (!_options.MinimumSize.IsEmpty)
         {
-            mmi->ptMinTrackSize.X = _options.MinimumSize.Width;
-            mmi->ptMinTrackSize.Y = _options.MinimumSize.Height;
+            var scale = GetWindowDpiScale();
+            var width = (int)Math.Round(_options.MinimumSize.Width * scale, 0);
+            var height = (int)Math.Round(_options.MinimumSize.Height * scale, 0);
+            mmi->ptMinTrackSize.X = width;
+            mmi->ptMinTrackSize.Y = height;
             isHandled = true;
         }
 
         if (!_options.MaximumSize.IsEmpty)
         {
-            mmi->ptMaxTrackSize.X = _options.MaximumSize.Width;
-            mmi->ptMaxTrackSize.Y = _options.MaximumSize.Height;
+            var scale = GetWindowDpiScale();
+            var width = (int)Math.Round(_options.MaximumSize.Width * scale, 0);
+            var height = (int)Math.Round(_options.MaximumSize.Height * scale, 0);
+            mmi->ptMaxTrackSize.X = width;
+            mmi->ptMaxTrackSize.Y = height;
             isHandled = true;
         }
 

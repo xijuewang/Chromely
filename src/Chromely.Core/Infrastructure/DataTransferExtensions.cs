@@ -1,6 +1,8 @@
 ﻿// Copyright © 2017 Chromely Projects. All rights reserved.
 // Use of this source code is governed by MIT license that can be found in the LICENSE file.
 
+using System.Text.Json.Serialization;
+
 namespace Chromely.Core.Infrastructure;
 
 public static class DataTransferExtensions
@@ -181,9 +183,11 @@ public static class DataTransferExtensions
 
         options = new JsonSerializerOptions
         {
+            NumberHandling = JsonNumberHandling.AllowReadingFromString,
             ReadCommentHandling = JsonCommentHandling.Skip,
             AllowTrailingCommas = true,
-            PropertyNameCaseInsensitive = true
+            PropertyNameCaseInsensitive = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
         };
         return options;
     }

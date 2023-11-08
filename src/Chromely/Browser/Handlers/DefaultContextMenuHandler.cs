@@ -28,14 +28,14 @@ public class DefaultContextMenuHandler : CefContextMenuHandler
     protected override void OnBeforeContextMenu(CefBrowser browser, CefFrame frame, CefContextMenuParams state, CefMenuModel model)
     {
         // To disable the menu then call clear
+        if ((state.ContextMenuType & CefContextMenuTypeFlags.Editable) == CefContextMenuTypeFlags.Editable)
+            return;
         model.Clear();
-
         if (_config.Platform == ChromelyPlatform.Windows)
         {
             // Removing existing menu item
             // Remove "View Source" option
             model.Remove((int)CefMenuId.ViewSource);
-
             if (debugging)
             {
                 // Add new custom menu items

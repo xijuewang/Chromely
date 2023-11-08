@@ -15,9 +15,7 @@ public partial class DataTransferOptions : IChromelyDataTransferOptions
     public DataTransferOptions(JsonSerializerOptions? serializerOptions = null)
     {
         Encoding = Encoding.UTF8;
-        SerializerOptions = (serializerOptions is not null) 
-                            ? serializerOptions.ToSerializerOptions()
-                            : new JsonSerializerOptions();
+        SerializerOptions = serializerOptions.ToSerializerOptions();
     }
 
     /// <inheritdoc />

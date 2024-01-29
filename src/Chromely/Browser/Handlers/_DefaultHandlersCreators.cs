@@ -3,6 +3,8 @@
 
 #nullable disable
 
+using Chromely.Browser.Handlers;
+
 namespace Chromely.Browser;
 
 internal interface IDefaultCustomHandler
@@ -113,6 +115,14 @@ internal sealed class ChromelyRequestHandler : DefaultRequestHandler, IDefaultCu
 {
     public ChromelyRequestHandler(IChromelyConfiguration config, IChromelyRequestHandler requestHandler, IChromelyRouteProvider routeProvider, IChromelyWindow window, CefResourceRequestHandler resourceRequestHandler = null)
             : base(config, requestHandler, routeProvider, window, resourceRequestHandler)
+    {
+    }
+}
+
+internal sealed class ChromelyFocusHandler : DefaultFocusHandler, IDefaultCustomHandler
+{
+    public ChromelyFocusHandler(IChromelyConfiguration config, IChromelyRequestHandler requestHandler, IChromelyRouteProvider routeProvider, IChromelyWindow window, CefResourceRequestHandler resourceRequestHandler = null)
+            : base()
     {
     }
 }

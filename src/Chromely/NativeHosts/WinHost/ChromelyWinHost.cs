@@ -57,7 +57,7 @@ public class ChromelyWinHost : NativeHostBase
                 return DefWindowProcW(hWnd, msg, wParam, new IntPtr(-1));
             case WM.SIZE:
                 {
-                    _maximized = wParam == (IntPtr)WINDOW_SIZE.MAXIMIZED
+                     _maximized = wParam == (IntPtr)WINDOW_SIZE.MAXIMIZED
                         || wParam == (IntPtr)WINDOW_SIZE.MAXSHOW;
                     ForceRedraw(hWnd);
                     break;
@@ -73,7 +73,7 @@ public class ChromelyWinHost : NativeHostBase
 
                     var result = DefWindowProcW(hWnd, msg, wParam, lParam);
                     var csp = (NcCalcSizeParams)Marshal.PtrToStructure(lParam, typeof(NcCalcSizeParams));
-                    csp.Region.Input.TargetWindowRect.top -= topFrameHeight; //_maximized ? 0 : topFrameHeight; 
+                    csp.Region.Input.TargetWindowRect.top -=  _maximized ? topFrameHeight+1 : topFrameHeight; 
                     Marshal.StructureToPtr(csp, lParam, false);
                     return result;
                 }

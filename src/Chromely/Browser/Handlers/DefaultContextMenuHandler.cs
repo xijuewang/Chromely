@@ -29,7 +29,25 @@ public class DefaultContextMenuHandler : CefContextMenuHandler
     {
         // To disable the menu then call clear
         if ((state.ContextMenuType & CefContextMenuTypeFlags.Editable) == CefContextMenuTypeFlags.Editable)
+        {
+            var index = model.GetIndexOf((int)CefMenuId.SpellcheckSuggestion0);
+            if (index > -1)
+                model.RemoveAt(index - 1);
+            model.Remove((int)CefMenuId.SpellcheckSuggestion0);
+            model.Remove((int)CefMenuId.SpellcheckSuggestion1);
+            model.Remove((int)CefMenuId.SpellcheckSuggestion2);
+            model.Remove((int)CefMenuId.SpellcheckSuggestion3);
+            model.Remove((int)CefMenuId.SpellcheckSuggestion4);
+            var indexNoSpell = model.GetIndexOf((int)CefMenuId.NoSpellingSuggestions);
+            var indexAddTo = model.GetIndexOf((int)CefMenuId.AddToDictionary);
+            index = indexNoSpell > -1 ? indexNoSpell : indexAddTo;
+            if (index > -1)
+                model.RemoveAt(index - 1);           
+            model.Remove((int)CefMenuId.NoSpellingSuggestions);
+            model.Remove((int)CefMenuId.AddToDictionary);
             return;
+        }
+
         model.Clear();
         if (_config.Platform == ChromelyPlatform.Windows)
         {

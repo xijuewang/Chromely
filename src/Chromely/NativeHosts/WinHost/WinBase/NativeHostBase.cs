@@ -679,7 +679,7 @@ public abstract partial class NativeHostBase : IChromelyNativeHost
         }
 
         // https://stackoverflow.com/questions/39816031/maximize-window-maintaining-taskbar-limits
-        if (_options.WindowFrameless && _options.WindowState == WindowState.Maximize)
+        if (_options.WindowFrameless) //本状态判断在还原最大化时出现全屏 && _options.WindowState == WindowState.Maximize 
         {  
             IntPtr handle = MonitorFromWindow(hWnd, MONITOR.DEFAULTTONEAREST);
 

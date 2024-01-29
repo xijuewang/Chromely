@@ -72,5 +72,6 @@ public abstract class ChromelyAppBase : ChromelyApp
         services.AddSingleton<CefLifeSpanHandler, ChromelyLifeSpanHandler>();
         services.AddSingleton<CefLoadHandler, ChromelyLoadHandler>();
         services.AddSingleton<CefRequestHandler, ChromelyRequestHandler>();
+        services.AddSingleton<CefFocusHandler, ChromelyFocusHandler>();
     }
 }
